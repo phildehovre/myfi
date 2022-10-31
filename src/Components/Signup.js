@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { auth } from '../Config/firebase'
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth'
+import { createPortfolio } from '../Util/db'
 
 const schema = yup.object().shape({
     firstName: yup.string().required('Your first name is required'),
@@ -25,8 +26,8 @@ function Signup() {
     ] = useCreateUserWithEmailAndPassword(auth)
 
     const onSubmit = (data) => {
-        console.log(data.email, data.password, user)
         createUserWithEmailAndPassword(data.email, data.password)
+        createPortfolio(auth.currentUser.uid, ['TSLA', 'PG'])
     }
 
     return (

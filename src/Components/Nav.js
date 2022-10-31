@@ -22,6 +22,7 @@ function Nav() {
             </div>
             <ul>
                 <Link className='link-ctn' to='/'>Home</Link>
+                <Link className='link-ctn' to='/Portfolio'>Portfolio</Link>
                 <Link className='link-ctn' to='/about'>About</Link>
                 {!user && <Link className='link-ctn' to='/login'>Log in</Link>}
                 <div onClick={() => { setShowDropdown(!showDropdown) }} className='link-ctn user'>{user?.displayName?.split(' ')[0]}
