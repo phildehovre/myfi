@@ -44,7 +44,7 @@
             }
         }
 
-        .dropdown-ctn {
+        .hb-menu-dropdown-ctn {
             display: flex;
             flex-direction: column;
             position: absolute;
@@ -53,7 +53,7 @@
             top: 4em;
             padding: 1em;
 
-            li {
+            .hb-menu-dropdown-item {
                 padding: .5em;
                 list-style: none;
                 border-top: 1px solid rgba(0, 0, 0, 0.158);

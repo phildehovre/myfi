@@ -1,31 +1,71 @@
 .searchbar_form-ctn {
     display: flex;
     align-items: center;
+    position: relative;
 }
 
 .searchbar {
     border: 2px solid rgb(216, 216, 216);
     padding: 1em;
-    border-radius: 10px;
+    border-radius: 30px;
     width: 60vw;
     font-size: larger;
     background-color: white;
-    z-index: 1
+    z-index: 0;
+    position: relative;
 }
 
 .searchbar-btn {
     border: 2px solid rgb(216, 216, 216);
-    border-radius: 10px;
-    padding: 1em;
-    height: 65px;
-    z-index: 0;
-    margin-left: -15px;
-    width: 15vw;
+    border-radius: 26px;
+    height: 2.85em;
+    z-index: 1;
+    width: 75px;
     font-weight: bolder;
     font-size: large;
+    position: absolute;
+    right: 5px;
 
     &:hover {
         background-color: rgb(153, 181, 206);
         cursor: pointer;
+    }
+}
+
+.autocomplete-list {
+    // border: 1px solid rgb(231, 231, 231);
+    height: fit-content;
+    list-style: none;
+    position: absolute;
+    width: 100%;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    top: 80%;
+    padding: 0;
+
+
+    &-item {
+        width: 100%;
+        color: grey;
+        height: fit-content;
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+        padding: .5em;
+
+        &:hover {
+            background-color: rgb(230, 249, 255);
+        }
+
+        .symbol {
+            width: 50%;
+            text-align: left;
+        }
+
+        .shortname {
+
+            width: 50%;
+            text-align: left;
+        }
     }
 }

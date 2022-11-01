@@ -28,9 +28,9 @@ function Nav() {
                 <div onClick={() => { setShowDropdown(!showDropdown) }} className='link-ctn user'>{user?.displayName?.split(' ')[0]}
                     {user && <img src={user?.photoURL || ""} style={{ borderRadius: '50px', height: '35px' }}></img>}
                     {showDropdown &&
-                        <ul className='dropdown-ctn'>
-                            <li onClick={() => { handleSignOut() }}>Sign Out</li>
-                            <li>Settings</li>
+                        <ul className='hb-menu-dropdown-ctn'>
+                            <li className='hb-menu-dropdown-item' onClick={() => { handleSignOut() }}>Sign Out</li>
+                            <li className='hb-menu-dropdown-item'>Settings</li>
                         </ul>}
                 </div>
             </ul>
