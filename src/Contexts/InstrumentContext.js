@@ -10,7 +10,7 @@ function InstrumentProvider({ children }) {
 
     const [ticker, setTicker] = useState('')
     const [interval, setInterval] = useState('1day')
-    const [tickerObjects, setTickerObjects] = useState({})
+    const [tickerObject, setTickerObject] = useState(null)
     const [portfolio, setPortfolio] = useState([])
 
     let tickers = []
@@ -22,20 +22,21 @@ function InstrumentProvider({ children }) {
         }
         return false
     }
-    // useEffect(() => {
-    //     axios.get(`https://api.twelvedata.com/time_series?&apikey=${process.env.REACT_APP_TWELVEDATA_API_KEY}`, {
-    //         params: {
-    //             symbol: ticker,
-    //             interval: '1week',
-    //             output: '200'
-    //         }
-    //     }).then((res, err) => {
-    //         validateTicker(ticker, res.code)
-    //         if (res.data.code !== 400) {
-    //             setTickerObjects(prev => ({ ...prev, [ticker]: res.data }))
-    //         }
-    //     })
-    // }, [ticker])
+
+    useEffect(() => {
+        axios.get(`https://api.twelvedata.com/time_series?&apikey=${process.env.REACT_APP_TWELVEDATA_API_KEY}`, {
+            params: {
+                symbol: ticker,
+                interval: '1year',
+                output: '200'
+            }
+        }).then((res, err) => {
+            validateTicker(ticker, res.code)
+            if (res.data.code !== 400) {
+                setTickerObject(prev => ({ ...prev, [ticker]: res.data }))
+            }
+        })
+    }, [ticker])
 
     useEffect(() => {
         if (auth.currentUser && !portfolio.length) {
@@ -45,26 +46,14 @@ function InstrumentProvider({ children }) {
         }
     })
 
-    useEffect(() => {
-        // const options = {
-        //     method: 'GET',
-        //     url: 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/auto-complete',
-        //     params: { q: 'tesla', region: 'US' },
-        //     headers: {
-        //         'X-RapidAPI-Key': process.env.REACT_APP_YAHOO_API_KEY,
-        //         'X-RapidAPI-Host': 'apidojo-yahoo-finance-v1.p.rapidapi.com'
-        //     }
-        // };
-
-        // axios.request(options).then(function (response) {
-        //     console.log(response.data);
-        // }).catch(function (error) {
-        //     console.error(error);
-        // });
-    })
-
-
-    const value = { ticker, tickerObjects, setPortfolio }
+    const value = {
+        ticker,
+        tickerObject,
+        setPortfolio,
+        setTicker,
+        validateTicker,
+        setTickerObject
+    }
 
 
     return (

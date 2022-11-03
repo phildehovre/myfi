@@ -17,11 +17,19 @@ export const getUser = async (uid) => {
 }
 
 export const addInstrument = async (uid, ticker) => {
-    const res = await updateDoc(doc(db, 'users', uid), { portfolio: arrayUnion(ticker) })
+    const docRef = doc(db, "users", uid)
+    const docSnap = await getDoc(docRef)
+
+    if (!ticker) return
+
+    if (docSnap.exists()) {
+        updateDoc(docRef, { portfolio: arrayUnion(ticker) })
+    } else {
+        setDoc(docRef, { 'portfolio': [ticker] })
+    }
 }
 
 export const createPortfolio = async (uid, ticker) => {
-
     const res = await setDoc(doc(db, 'users', uid), {
         portfolio: ticker
     }, { merge: true })

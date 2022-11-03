@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { InstrumentContext } from '../Contexts/InstrumentContext'
 import { useForm } from 'react-hook-form'
 import { auth } from '../Config/firebase'
@@ -12,13 +12,13 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 function SearchBar(props) {
 
     const { height } = props
-    const { handleSubmit, register } = useForm()
-    // const { ticker } = useContext(InstrumentContext)
+    const { handleSubmit, register, reset } = useForm()
+    const { setTicker } = useContext(InstrumentContext)
 
     const [term, setTerm] = useState('')
     const [autoComplete, setAutoComplete] = useState([])
     const [show, setShow] = useState(true)
-
+    const dropdownRef = useRef()
 
     useEffect(() => {
         const options = {
@@ -40,24 +40,40 @@ function SearchBar(props) {
 
 
     const onSubmit = (data) => {
+        console.log('data', term)
         handleSubmit(data)
-        addInstrument(auth.currentUser.uid, data.searchTerm)
+        addInstrument(auth.currentUser.uid, term)
+        reset()
+        setTerm('')
     }
 
-    window.addEventListener('click', (e) => {
-        if (show && e.target.classname !== 'autocomplete-list') {
+
+
+    useEffect(() => {
+
+        const closeDropdown = (e) => {
             setShow(false)
         }
-        else {
-            setShow(true)
-        }
+
+        document.body.addEventListener('click', closeDropdown)
+
+        return () => document.body.removeEventListener('click', closeDropdown)
     })
+
+    const handleOnSearchBarInput = (e) => {
+        setShow(true)
+        setTerm(e.target.value)
+    }
+
+    const handleTickerClick = (t) => {
+        setTicker(t)
+    }
 
     const renderAutoComplete = () => {
         if (term && show && autoComplete && autoComplete.length > 0) {
             return autoComplete.map(val => {
                 return (
-                    <li className='autocomplete-list-item' >
+                    <li className='autocomplete-list-item' ref={dropdownRef} key={val.symbol} onClick={e => { handleTickerClick(val.symbol) }}>
                         <span className='symbol'>
                             {val.symbol}
                         </span>
@@ -74,10 +90,10 @@ function SearchBar(props) {
         <>
             <Container height={height}>
                 <form className='searchbar_form-ctn' onSubmit={handleSubmit(onSubmit)}>
-                    <input {...register('searchTerm')} name='searchTerm' className='searchbar' onChange={e => { setTerm(e.target.value) }} type='text'></input>
+                    <input {...register('term')} name='searchTerm' autocomplete="off" className='searchbar' onChange={e => { handleOnSearchBarInput(e) }} type='text'></input>
                     {/* {errors && <p style={{ position: 'absolute' }}>Invalid Ticker</p>} */}
                     <button className='searchbar-btn' type='submit'>
-                        <FontAwesomeIcon icon={faMagnifyingGlass} size='l' />
+                        <FontAwesomeIcon icon={faMagnifyingGlass} size='lg' />
                     </button>
                     <ul className='autocomplete-list'>{renderAutoComplete()}</ul>
                 </form>
