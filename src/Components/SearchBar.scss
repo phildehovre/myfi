@@ -33,39 +33,95 @@
 }
 
 .autocomplete-list {
-    // border: 1px solid rgb(231, 231, 231);
     height: fit-content;
     list-style: none;
     position: absolute;
     width: 100%;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    top: 80%;
+    top: 75px;
     padding: 0;
+    background-color: white;
 
 
     &-item {
+        display: grid;
         width: 100%;
         color: grey;
-        height: fit-content;
-        display: flex;
-        justify-content: space-between;
+        height: 3.5em;
+        grid-template-columns: 15% 40% 25% 20%;
         cursor: pointer;
         padding: .5em;
+        transition: 150ms ease-in-out all;
+        align-items: center;
 
         &:hover {
             background-color: rgb(230, 249, 255);
+            transition: 150ms ease-in-out all;
         }
 
         .symbol {
-            width: 50%;
             text-align: left;
         }
 
         .shortname {
-
-            width: 50%;
             text-align: left;
         }
     }
+
+    .watchlist_add-btn {
+
+        display: none;
+
+        &.visible {
+            display: flex;
+            border-radius: 50%;
+            right: 0;
+            transform: translate(-15%, -15%);
+            font-weight: bold;
+            font-size: 20px;
+            justify-content: center;
+            align-items: center;
+            justify-self: right;
+            text-align: center;
+
+            &:hover {
+                background-color: white;
+            }
+        }
+
+    }
+
+}
+
+.instrument_selction {
+    &-ctn {
+        display: flex;
+    }
+
+    &-btn {
+        background-color: white;
+        padding: 1em;
+        margin: 1em;
+        border: 1px solid rgb(188, 220, 248);
+        border-radius: 26px;
+        cursor: pointer;
+        width: 200px;
+        font-weight: bold;
+        font-size: large;
+
+        &:focus {
+            background-color: rgb(188, 220, 248);
+        }
+
+        &.active {
+            background-color: rgb(188, 220, 248);
+        }
+
+        &:hover {
+            background-color: rgb(188, 220, 248);
+
+        }
+    }
+
 }

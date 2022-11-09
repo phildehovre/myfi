@@ -26,6 +26,7 @@ import { discontinuousTimeScaleProviderBuilder } from "react-stockcharts/lib/sca
 import { OHLCTooltip, MovingAverageTooltip, MACDTooltip } from "react-stockcharts/lib/tooltip";
 import { ema, sma, macd } from "react-stockcharts/lib/indicator";
 import { fitWidth } from "react-stockcharts/lib/helper";
+import { InstrumentContext } from "../Contexts/InstrumentContext";
 
 function getMaxUndefined(calculators) {
     return calculators.map(each => each.undefinedLength()).reduce((a, b) => Math.max(a, b));
@@ -45,7 +46,8 @@ const macdAppearance = {
 class CandleStickChartPanToLoadMore extends React.Component {
     constructor(props) {
         super(props);
-        const { data: inputData } = props;
+        console.log(props.data)
+        let inputData = props.data
 
         const ema26 = ema()
             .id(0)

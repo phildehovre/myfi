@@ -1,5 +1,11 @@
-import React, { useState, useContext, useEffect, useRef } from 'react'
+import React, {
+    useState,
+    useEffect,
+    useContext,
+    // useRef 
+} from 'react'
 import { InstrumentContext } from '../Contexts/InstrumentContext'
+import AutoComplete from './AutoComplete'
 import { useForm } from 'react-hook-form'
 import { auth } from '../Config/firebase'
 import axios from 'axios'
@@ -8,6 +14,7 @@ import './SearchBar.scss'
 import { addInstrument } from '../Util/db'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+// import { uuidv4 } from '@firebase/util'
 
 function SearchBar(props) {
 
@@ -15,32 +22,41 @@ function SearchBar(props) {
     const { handleSubmit, register, reset } = useForm()
     const { setTicker } = useContext(InstrumentContext)
 
-    const [term, setTerm] = useState('')
+    const [term, setTerm] = useState(null)
     const [autoComplete, setAutoComplete] = useState([])
     const [show, setShow] = useState(true)
-    const dropdownRef = useRef()
+    const [type, setType] = useState('stocks')
+
+    // useEffect(() => {
+    //     const options = {
+    //         method: 'GET',
+    //         url: 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/auto-complete',
+    //         params: { q: term, region: 'US' },
+    //         headers: {
+    //             'X-RapidAPI-Key': process.env.REACT_APP_YAHOO_API_KEY,
+    //             'X-RapidAPI-Host': 'apidojo-yahoo-finance-v1.p.rapidapi.com'
+    //         }
+    //     };
+
+    //     axios.request(options).then(function (response) {
+    //         setAutoComplete(response.data.quotes);
+    //     }).catch(function (error) {
+    //         console.error(error);
+    //     });
+    // }, [term])
+
 
     useEffect(() => {
-        const options = {
-            method: 'GET',
-            url: 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/auto-complete',
-            params: { q: term, region: 'US' },
-            headers: {
-                'X-RapidAPI-Key': process.env.REACT_APP_YAHOO_API_KEY,
-                'X-RapidAPI-Host': 'apidojo-yahoo-finance-v1.p.rapidapi.com'
-            }
-        };
-
-        axios.request(options).then(function (response) {
-            setAutoComplete(response.data.quotes);
-        }).catch(function (error) {
-            console.error(error);
-        });
-    }, [term])
+        if (term && term.length) {
+            axios.get(`https://api.twelvedata.com/${type}?symbol=${term}&apikey=${process.env.REACT_APP_TWELVEDATA_API_KEY}`, {
+            }).then((res, err) => {
+                setAutoComplete(res.data.data)
+            }).catch(err => alert(err))
+        }
+    }, [term]);
 
 
     const onSubmit = (data) => {
-        console.log('data', term)
         handleSubmit(data)
         addInstrument(auth.currentUser.uid, term)
         reset()
@@ -49,53 +65,32 @@ function SearchBar(props) {
 
 
 
-    useEffect(() => {
-
-        const closeDropdown = (e) => {
-            setShow(false)
-        }
-
-        document.body.addEventListener('click', closeDropdown)
-
-        return () => document.body.removeEventListener('click', closeDropdown)
-    })
-
     const handleOnSearchBarInput = (e) => {
         setShow(true)
         setTerm(e.target.value)
     }
 
-    const handleTickerClick = (t) => {
-        setTicker(t)
+    const handleTypeChange = (type) => {
+        setType(type)
+        setTerm('')
     }
 
-    const renderAutoComplete = () => {
-        if (term && show && autoComplete && autoComplete.length > 0) {
-            return autoComplete.map(val => {
-                return (
-                    <li className='autocomplete-list-item' ref={dropdownRef} key={val.symbol} onClick={e => { handleTickerClick(val.symbol) }}>
-                        <span className='symbol'>
-                            {val.symbol}
-                        </span>
-                        <span className='shortname'>
-                            {val.shortname}
-                        </span>
-                    </li>
-                )
-            })
-        }
-    }
+
 
     return (
         <>
             <Container height={height}>
+                <div className='instrument_selction-ctn'>
+                    <button className={`instrument_selction-btn ${type === 'stocks' && 'active'}`} type='check' onClick={() => { handleTypeChange('stocks') }}>Stocks</button>
+                    <button className={`instrument_selction-btn ${type === 'etf' && 'active'}`} type='check' onClick={() => { handleTypeChange('etf') }}>ETF</button>
+                    <button className={`instrument_selction-btn ${type === 'indices' && 'active'}`} type='check' onClick={() => { handleTypeChange('indices') }}>Indices</button>
+                </div>
                 <form className='searchbar_form-ctn' onSubmit={handleSubmit(onSubmit)}>
-                    <input {...register('term')} name='searchTerm' autocomplete="off" className='searchbar' onChange={e => { handleOnSearchBarInput(e) }} type='text'></input>
-                    {/* {errors && <p style={{ position: 'absolute' }}>Invalid Ticker</p>} */}
+                    <input {...register('term')} name='searchTerm' autoComplete="off" className='searchbar' onChange={e => { handleOnSearchBarInput(e) }} type='text'></input>
                     <button className='searchbar-btn' type='submit'>
                         <FontAwesomeIcon icon={faMagnifyingGlass} size='lg' />
                     </button>
-                    <ul className='autocomplete-list'>{renderAutoComplete()}</ul>
+                    <AutoComplete term={term} setShow={setShow} show={show} autoComplete={autoComplete} />
                 </form>
             </Container>
         </>
@@ -103,3 +98,12 @@ function SearchBar(props) {
 }
 
 export default SearchBar
+
+
+    // useEffect(() => {
+    //     const closeDropdown = (e) => {
+    //         setShow(false)
+    //     }
+    //     document.body.addEventListener('click', closeDropdown)
+    //     return () => document.body.removeEventListener('click', closeDropdown)
+    // })
