@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { auth } from '../Config/firebase'
 import { fetchPortfolio } from '../Util/db'
-import { yahoo } from '../apis/Yahoo'
-import { dummy } from '../Util/Dummy'
+import { parseDate, getToday } from '../Util/formatters'
 
 export const InstrumentContext = React.createContext({})
 
@@ -11,6 +10,7 @@ function InstrumentProvider({ children }) {
 
     const [selectedTicker, setSelectedTicker] = useState('')
     const [interval, setInterval] = useState('1day')
+    const [outputSize, setOutputSize] = useState(1000)
     const [tickerObject, setTickerObject] = useState(null)
     const [portfolio, setPortfolio] = useState([])
     const [parsedData, setParsedData] = useState(null)
@@ -18,32 +18,14 @@ function InstrumentProvider({ children }) {
     const [date, setDate] = useState({ 'start': '', 'end': today })
     const [tickers, setTickers] = useState([])
 
-    let parseTime = (val) => {
-        if (val < 10) {
-            return '0' + val
-        } else {
-            return val
-        }
-    }
-
     useEffect(() => {
-        const today = new Date()
-        let day = parseTime(today.getDate())
-        let month = parseTime(today.getMonth() + 1)
-        let year = parseTime(today.getFullYear())
-        let hours = parseTime(today.getHours())
-        let minutes = parseTime(today.getMinutes())
-
-        let parsedDate = [year, month, day].join('-')
-        let parsedTime = [hours, minutes].join(':')
-        let parsedDateTime = [parsedDate, parsedTime].join(' ')
-
-        setToday(parsedDateTime)
+        setToday(getToday())
     },)
 
     useEffect(() => {
-        setParsedData(parseDate(dummy))
-    }, [])
+        if (tickerObject !== null)
+            setParsedData(parseDate(tickerObject[selectedTicker].values))
+    }, [tickerObject])
 
 
     useEffect(() => {
@@ -51,7 +33,7 @@ function InstrumentProvider({ children }) {
             params: {
                 symbol: selectedTicker,
                 interval: interval,
-                output: '200'
+                outputsize: outputSize
             }
         }).then((res, err) => {
             validateTicker(selectedTicker, res.code)
@@ -59,31 +41,8 @@ function InstrumentProvider({ children }) {
                 setTickerObject(prev => ({ ...prev, [selectedTicker]: res.data }))
             }
         });
-    }, [selectedTicker]);
+    }, [selectedTicker, outputSize]);
 
-
-    // useEffect(() => {
-    //     axios.get(`https://api.twelvedata.com/time_series?end_date=${today}&apikey=${process.env.REACT_APP_TWELVEDATA_API_KEY}`, {
-    //         params: {
-    //             symbol: 'AAPL',
-    //             interval: interval,
-    //             output: 200,
-    //             end_date: today
-    //         }
-    //     }).then((res, err) => {
-    //         validateTicker(selectedTicker, res.code)
-    //         console.log(res.data)
-    //         if (res.data.code !== 400) {
-    //             setTickerObject(prev => ({ ...prev, [selectedTicker]: res.data }))
-    //         }
-    //     });
-    // }, []);
-
-
-    useEffect(() => {
-        if (selectedTicker && selectedTicker.length > 0) {
-        }
-    }, [selectedTicker])
 
     useEffect(() => {
         if (auth.currentUser && !portfolio.length) {
@@ -101,22 +60,18 @@ function InstrumentProvider({ children }) {
         return false
     };
 
-    const parseDate = (data) => {
-        let array = []
-        data.values.forEach(row => {
-            let newRow = {
-                date: new Date(row.datetime),
-                open: +row.open,
-                high: +row.high,
-                low: +row.low,
-                close: +row.close,
-                volume: +row.volume
-            }
-            array.push(newRow)
-        })
-        return array
-    };
+    // const handleOutputSizeChange = (val) => {
+    //     if (outputSize)
+    //     if (val > 0) {
+    //         setOutputSize(prev => prev + 5)
+    //     } else {
+    //         setOutputSize(prev => prev - 5)
+    //     }
+    // }
 
+    const handleIntervalChange = (val) => {
+        setInterval(val)
+    }
     const handleTickerChange = (t) => {
         setSelectedTicker(t)
     };
@@ -127,14 +82,12 @@ function InstrumentProvider({ children }) {
 
 
     const value = {
-        selectedTicker,
-        tickerObject,
-        setPortfolio,
         handleTickerChange,
-        validateTicker,
         setTickerObject,
         parsedData,
-        handleAddToWatchlist
+        handleAddToWatchlist,
+        selectedTicker,
+        tickerObject
     }
 
 
