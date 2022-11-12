@@ -127,10 +127,13 @@ function TickerDetail() {
     return (
         <Section display='grid'>
             <Card>
-                <p>{sampleSize} weeks: {weeks}</p>
-                {/* <input type='range' min='7' max='500' onChange={(e) => handleSampleSizeChange(e)} /> */}
-                {renderAverageClosingPrice(sample500)}
-                {renderAverageYearlySimpleReturns(sample500)}
+                <span>
+                    {/* <h1>{tickerObject[selectedTicker].meta.symbol}</h1> */}
+                    {/* <p>{tickerObject[selectedTicker].meta.currency}</p> */}
+                </span>
+                <p>Trading Days:{sampleSize}</p>
+                {renderAverageClosingPrice(parsedData)}
+                {renderAverageYearlySimpleReturns(parsedData)}
             </Card>
             <Card span='2'>
                 {sample500 && sample500.length > 0 && <Chart chartData={chartData} handleSampleSizeChange={handleSampleSizeChange} />}

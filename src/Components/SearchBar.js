@@ -20,31 +20,12 @@ function SearchBar(props) {
 
     const { height } = props
     const { handleSubmit, register, reset } = useForm()
-    const { setTicker } = useContext(InstrumentContext)
+    const { setTicker, setTickerObject, tickerObject } = useContext(InstrumentContext)
 
     const [term, setTerm] = useState(null)
     const [autoComplete, setAutoComplete] = useState([])
     const [show, setShow] = useState(true)
     const [type, setType] = useState('stocks')
-
-    // useEffect(() => {
-    //     const options = {
-    //         method: 'GET',
-    //         url: 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/auto-complete',
-    //         params: { q: term, region: 'US' },
-    //         headers: {
-    //             'X-RapidAPI-Key': process.env.REACT_APP_YAHOO_API_KEY,
-    //             'X-RapidAPI-Host': 'apidojo-yahoo-finance-v1.p.rapidapi.com'
-    //         }
-    //     };
-
-    //     axios.request(options).then(function (response) {
-    //         setAutoComplete(response.data.quotes);
-    //     }).catch(function (error) {
-    //         console.error(error);
-    //     });
-    // }, [term])
-
 
     useEffect(() => {
         if (term && term.length) {

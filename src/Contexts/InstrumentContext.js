@@ -10,7 +10,7 @@ function InstrumentProvider({ children }) {
 
     const [selectedTicker, setSelectedTicker] = useState('')
     const [interval, setInterval] = useState('1day')
-    const [outputSize, setOutputSize] = useState(1000)
+    const [outputSize, setOutputSize] = useState(5000)
     const [tickerObject, setTickerObject] = useState(null)
     const [portfolio, setPortfolio] = useState([])
     const [parsedData, setParsedData] = useState(null)
@@ -60,14 +60,6 @@ function InstrumentProvider({ children }) {
         return false
     };
 
-    // const handleOutputSizeChange = (val) => {
-    //     if (outputSize)
-    //     if (val > 0) {
-    //         setOutputSize(prev => prev + 5)
-    //     } else {
-    //         setOutputSize(prev => prev - 5)
-    //     }
-    // }
 
     const handleIntervalChange = (val) => {
         setInterval(val)
