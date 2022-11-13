@@ -52,7 +52,7 @@ function TickerDetail() {
             ]
         }
         setChartData(data)
-    }, [sample500])
+    }, [])
 
     useEffect(() => {
         if (sample500 !== null) {
