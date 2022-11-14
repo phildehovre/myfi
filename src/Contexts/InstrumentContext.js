@@ -8,7 +8,7 @@ export const InstrumentContext = React.createContext({})
 
 function InstrumentProvider({ children }) {
 
-    const [selectedTicker, setSelectedTicker] = useState('')
+    const [selectedTicker, setSelectedTicker] = useState({})
     const [interval, setInterval] = useState('1day')
     const [outputSize, setOutputSize] = useState(5000)
     const [tickerObject, setTickerObject] = useState(null)
@@ -23,26 +23,26 @@ function InstrumentProvider({ children }) {
     },)
 
     useEffect(() => {
-        if (tickerObject !== null)
-            setParsedData(parseDate(tickerObject[selectedTicker].values))
+        if (tickerObject !== null && tickerObject[selectedTicker.symbol].values)
+            setParsedData(parseDate(tickerObject[selectedTicker.symbol].values))
     }, [tickerObject])
 
 
     useEffect(() => {
-        axios.get(`https://api.twelvedata.com/time_series?symbol=${selectedTicker}&apikey=${process.env.REACT_APP_TWELVEDATA_API_KEY}`, {
+        axios.get(`https://api.twelvedata.com/time_series?symbol=${selectedTicker.symbol}&apikey=${process.env.REACT_APP_TWELVEDATA_API_KEY}`, {
             params: {
-                symbol: selectedTicker,
+                symbol: selectedTicker.symbol,
                 interval: interval,
                 outputsize: outputSize
             }
         }).then((res, err) => {
-            validateTicker(selectedTicker, res.code)
+            validateTicker(selectedTicker.symbol, res.code)
             if (res.data.code !== 400) {
-                setTickerObject(prev => ({ ...prev, [selectedTicker]: res.data }))
+                setTickerObject(prev => (
+                    { [selectedTicker.symbol]: { ...res.data, meta: { ...res.data.meta, name: selectedTicker.name } } }))
             }
         });
     }, [selectedTicker, outputSize]);
-
 
     useEffect(() => {
         if (auth.currentUser && !portfolio.length) {
@@ -60,7 +60,7 @@ function InstrumentProvider({ children }) {
         return false
     };
 
-
+    console.log(selectedTicker)
     const handleIntervalChange = (val) => {
         setInterval(val)
     }

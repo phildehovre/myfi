@@ -3,7 +3,7 @@ import './Section.scss'
 
 function Section(props) {
 
-    const { title, children, display } = props
+    const { title, width, height, children, display } = props
 
     const [gridTemplate, setGridTemplate] = useState('1fr 1fr 1fr')
 
@@ -22,11 +22,12 @@ function Section(props) {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '1em',
+        height: height || '100vh',
     }
 
     return (
         <div className='section' >
-            <h1>{title}</h1>
+            {title && <h1>{title}</h1>}
             <div className='section-ctn' style={styles}>
                 {children}
             </div>

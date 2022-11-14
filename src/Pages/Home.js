@@ -12,7 +12,7 @@ function Home() {
 
 
     return (
-        <Hero />
+        <Hero height='100vh' />
     )
 }
 

@@ -67,7 +67,7 @@ function SearchBar(props) {
                     <button className={`instrument_selction-btn ${type === 'indices' && 'active'}`} type='check' onClick={() => { handleTypeChange('indices') }}>Indices</button>
                 </div>
                 <form className='searchbar_form-ctn' onSubmit={handleSubmit(onSubmit)}>
-                    <input {...register('term')} name='searchTerm' autoComplete="off" className='searchbar' onChange={e => { handleOnSearchBarInput(e) }} type='text'></input>
+                    <input {...register('term')} name='searchTerm' autoComplete="off" className='searchbar' onChange={e => { handleOnSearchBarInput(e) }} placeholder='Try GE, TSLA, AMZN, ...' type='text'></input>
                     <button className='searchbar-btn' type='submit'>
                         <FontAwesomeIcon icon={faMagnifyingGlass} size='lg' />
                     </button>

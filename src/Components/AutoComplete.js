@@ -1,5 +1,6 @@
-import InstrumentProvider, { InstrumentContext } from '../Contexts/InstrumentContext'
-import React, { useContext, useEffect, useState, useMemo } from 'react'
+import { InstrumentContext } from '../Contexts/InstrumentContext'
+import { WatchlistContext } from '../Contexts/WatchlistContext'
+import React, { useContext, useState } from 'react'
 import { faBinoculars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -7,7 +8,8 @@ import { uuidv4 } from '@firebase/util'
 
 function AutoComplete({ term, setShow, show, autoComplete }) {
 
-    const { handleTickerChange, handleAddToWatchlist } = useContext(InstrumentContext)
+    const { handleTickerChange } = useContext(InstrumentContext)
+    const { handleAddToWatchlist } = useContext(WatchlistContext)
 
     const [showButton, setShowButton] = useState(false)
     const [isHovered, setIsHovered] = useState(null)
@@ -31,9 +33,8 @@ function AutoComplete({ term, setShow, show, autoComplete }) {
                 return (
                     <li className='autocomplete-list-item'
                         key={uuidv4()}
-                        onClick={e => { handleTickerClick(val.symbol) }}
+                        onClick={e => { handleTickerClick(val) }}
                         onMouseEnter={(e) => handleMouseEnter(val.mic_code)}
-                        onMouseLeave={() => handleMouseLeave()}
                     >
                         <span className='symbol'>
                             {val.symbol}

@@ -1,11 +1,11 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { InstrumentContext } from '../Contexts/InstrumentContext'
+import React, { useState, useEffect, useContext } from 'react'
 import Section from './Section'
 import Chart from './Chart'
 import { dummy } from '../Util/Dummy'
 import { uuidv4 } from '@firebase/util'
 import Card from './Card'
 import { Chart as ChartJS, LineController, LineElement, PointElement, LinearScale, Title, defaults } from 'chart.js';
+import { InstrumentContext } from '../Contexts/InstrumentContext'
 
 ChartJS.register(LineController, LineElement, PointElement, LinearScale, Title);
 
@@ -13,9 +13,7 @@ function TickerDetail() {
 
     const { parsedData, tickerObject, selectedTicker } = useContext(InstrumentContext)
 
-    console.log(tickerObject, selectedTicker)
-
-    const [sample500, setSample500] = useState(null)
+    const [sample, setSample] = useState(null)
     const [sampleSize, setSampleSize] = useState(50)
     const [weeks, setWeeks] = useState(0)
     const [chartData, setChartData] = useState({})
@@ -25,7 +23,7 @@ function TickerDetail() {
             const res = await parsedData
             if (parsedData && parsedData.length) {
                 if (sampleSize < res.length) {
-                    setSample500(res.slice(res.length - sampleSize))
+                    setSample(res.slice(res.length - sampleSize))
                 }
             }
         })()
@@ -55,20 +53,20 @@ function TickerDetail() {
     }, [])
 
     useEffect(() => {
-        if (sample500 !== null) {
-            const backgroundColor = sample500[0].close > sample500[sample500.length - 1].close ? 'rgba(255, 99, 132, 0.5)' : "rgba(75,192,192,0.2)"
+        if (sample !== null) {
+            const backgroundColor = sample[0].close > sample[sample.length - 1].close ? 'rgba(255, 99, 132, 0.5)' : "rgba(75,192,192,0.2)"
             const data = {
-                labels: sample500.map(i => i.date.toString().split(' ').slice(1, 4)),
+                labels: sample.map(i => i.date.toString().split(' ').slice(1, 4)),
                 datasets: [{
                     label: 'Adj. Close',
-                    data: sample500.map(i => i.close),
+                    data: sample.map(i => i.close),
                     backgroundColor: backgroundColor,
                     fill: true
                 }]
             }
             setChartData(data)
         }
-    }, [sample500])
+    }, [sample])
 
     const renderParsedData = () => {
         if (parsedData) {
@@ -99,9 +97,9 @@ function TickerDetail() {
     const formatToPercentage = (value) => (value * 100).toFixed(2) + '%'
 
     const handleSampleSizeChange = (val) => {
-        if (val > 0) {
+        if (val > 0 && sampleSize <= 5000) {
             setSampleSize(prev => prev + 5)
-        } else {
+        } else if (val < 0 && sampleSize > 5) {
             setSampleSize(prev => prev - 5)
         }
     }
@@ -123,20 +121,19 @@ function TickerDetail() {
         }
 
     }
-
     return (
-        <Section display='grid'>
+        <Section height='fit-content' display='grid'>
             <Card>
                 <span>
-                    {/* <h1>{tickerObject[selectedTicker].meta.symbol}</h1> */}
-                    {/* <p>{tickerObject[selectedTicker].meta.currency}</p> */}
+                    <h1>{tickerObject[selectedTicker.symbol]?.meta.name}</h1>
+                    <p>{tickerObject[selectedTicker.symbol]?.meta.currency}</p>
                 </span>
                 <p>Trading Days:{sampleSize}</p>
                 {renderAverageClosingPrice(parsedData)}
                 {renderAverageYearlySimpleReturns(parsedData)}
             </Card>
             <Card span='2'>
-                {sample500 && sample500.length > 0 && <Chart chartData={chartData} handleSampleSizeChange={handleSampleSizeChange} />}
+                {sample && sample.length > 0 && <Chart chartData={chartData} handleSampleSizeChange={handleSampleSizeChange} />}
             </Card>
         </Section >
     )

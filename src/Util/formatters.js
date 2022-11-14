@@ -29,7 +29,6 @@ export const getToday = () => {
 export const parseDate = (data) => {
     let array = []
     data.forEach(row => {
-        console.log(row)
         let newRow = {
             date: new Date(row.datetime),
             open: +row.open,
