@@ -11,10 +11,11 @@ import Nav from './Components/Nav';
 import './Global.scss'
 import DiscoverPage from './Pages/DiscoverPage';
 import WatchlistPage from './Pages/WatchlistPage';
+import { auth } from './Config/firebase';
 
 
 function App() {
-
+  console.log(auth)
   return (
     <div className="App">
       <InstrumentProvider>

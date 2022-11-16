@@ -6,17 +6,26 @@ import { uuidv4 } from '@firebase/util'
 import Card from './Card'
 import { Chart as ChartJS, LineController, LineElement, PointElement, LinearScale, Title, defaults } from 'chart.js';
 import { InstrumentContext } from '../Contexts/InstrumentContext'
+import { WatchlistContext } from '../Contexts/WatchlistContext'
 
 ChartJS.register(LineController, LineElement, PointElement, LinearScale, Title);
 
 function TickerDetail() {
 
-    const { parsedData, tickerObject, selectedTicker } = useContext(InstrumentContext)
+    const { parsedData, tickerObject, selectedTicker, setSelectedTicker } = useContext(InstrumentContext)
+    const { watchlist } = useContext(WatchlistContext)
 
     const [sample, setSample] = useState(null)
     const [sampleSize, setSampleSize] = useState(50)
     const [weeks, setWeeks] = useState(0)
     const [chartData, setChartData] = useState({})
+
+
+    useEffect(() => {
+        if (watchlist.length > 0) {
+            setSelectedTicker(watchlist[0])
+        }
+    }, [])
 
     useEffect(() => {
         (async () => {
@@ -108,9 +117,10 @@ function TickerDetail() {
         if (data && data.length) {
             const shiftedData = data.slice(1)
             const dailyReturns = data.map((v, i) => {
-                if (shiftedData[i] && shiftedData[i].close && shiftedData[i].close !== NaN) {
+                if (shiftedData[i] && shiftedData[i].close && isNaN(shiftedData[i].close)) {
                     return (v.close / shiftedData[i].close) - 1
                 }
+                return null
             })
             const averageYearlyReturns = (dailyReturns.slice(0, dailyReturns.length - 1)
                 .reduce((acc, v) => { return acc + v }) / data.length) * 250
@@ -121,12 +131,15 @@ function TickerDetail() {
         }
 
     }
+
+    // console.log(tickerObject[selectedTicker])
+
     return (
         <Section height='fit-content' display='grid'>
             <Card>
                 <span>
-                    <h1>{tickerObject[selectedTicker.symbol]?.meta.name}</h1>
-                    <p>{tickerObject[selectedTicker.symbol]?.meta.currency}</p>
+                    {/* <h1>{tickerObject[selectedTicker?.symbol]?.meta.name}</h1> */}
+                    {/* <p>{tickerObject[selectedTicker?.symbol]?.meta.currency}</p> */}
                 </span>
                 <p>Trading Days:{sampleSize}</p>
                 {renderAverageClosingPrice(parsedData)}

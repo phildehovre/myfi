@@ -8,8 +8,7 @@ import { uuidv4 } from '@firebase/util'
 
 function AutoComplete({ term, setShow, show, autoComplete }) {
 
-    const { handleTickerChange } = useContext(InstrumentContext)
-    const { handleAddToWatchlist } = useContext(WatchlistContext)
+    const { handleTickerChange, handleAddToWatchlist } = useContext(InstrumentContext)
 
     const [showButton, setShowButton] = useState(false)
     const [isHovered, setIsHovered] = useState(null)

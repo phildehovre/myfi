@@ -3,7 +3,7 @@
     height: 100%;
     align-items: center;
     justify-content: center;
-    font-size: 1.5em;
+    font-size: 2em;
     width: 100vw;
 
     .tagline {
@@ -23,12 +23,23 @@
 
     .eye {
         position: relative;
-        height: 14em;
-        width: 14em;
+        height: 12em;
+        width: 12em;
         border: 10px solid black;
         border-radius: 100%;
         z-index: 10;
         clip-path: circle(50%);
+
+    }
+
+    .shadow {
+        position: absolute;
+        background-color: black;
+        width: 14em;
+        height: 1em;
+        border-radius: 100%;
+        z-index: 9;
+        transform: translate(-35%, 3em)
     }
 
     .iris {

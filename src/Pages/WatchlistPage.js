@@ -11,7 +11,7 @@ function WatchlistPage() {
     const [show, setShow] = useState(true)
 
 
-    console.log(watchlist && watchlist.length ? true : false, show)
+    // console.log(watchlist && watchlist.length ? true : false, show)
 
     return (
         <Section>

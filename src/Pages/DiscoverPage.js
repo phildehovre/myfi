@@ -13,7 +13,6 @@ function DiscoverPage() {
 
     const data = { parsedData, tickerObject, selectedTicker }
 
-    console.log(watchlist)
 
     return (
         <>

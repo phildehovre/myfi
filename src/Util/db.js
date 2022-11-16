@@ -16,18 +16,6 @@ export const getUser = async (uid) => {
     }
 }
 
-export const addInstrument = async (uid, ticker) => {
-    const docRef = doc(db, "users", uid)
-    const docSnap = await getDoc(docRef)
-
-    if (!ticker) return
-
-    if (docSnap.exists()) {
-        updateDoc(docRef, { portfolio: arrayUnion(ticker) })
-    } else {
-        setDoc(docRef, { 'portfolio': [ticker] })
-    }
-}
 
 export const createPortfolio = async (uid, ticker) => {
     const res = await setDoc(doc(db, 'users', uid), {
@@ -35,7 +23,20 @@ export const createPortfolio = async (uid, ticker) => {
     }, { merge: true })
 }
 
-export const fetchPortfolio = async (uid) => {
+export const updateWatchlist = async (uid, ticker) => {
+    const docRef = doc(db, "users", uid)
+    const docSnap = await getDoc(docRef)
+    console.log(ticker)
+    if (!ticker) return
+
+    if (docSnap.exists()) {
+        updateDoc(docRef, { watchlist: arrayUnion(ticker) })
+    } else {
+        setDoc(docRef, { 'watchlist': [ticker] })
+    }
+}
+export const fetchWatchlist = async (uid) => {
+    console.log('fetching watchlist')
     const res = await getDoc(doc(db, 'users', uid), {
     })
 

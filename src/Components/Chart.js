@@ -5,13 +5,16 @@ import { InstrumentContext } from '../Contexts/InstrumentContext'
 
 function Chart({ chartData, handleSampleSizeChange }) {
 
-
+    const handleWheelOverChart = (e) => {
+        handleSampleSizeChange(e.deltaY)
+        e.stopPropagation()
+    }
 
     return (
         <Line
             data={chartData}
             options={{}}
-            onWheel={e => handleSampleSizeChange(e.deltaY)}
+            onWheel={e => { handleWheelOverChart(e) }}
         />
     )
 }

@@ -11,7 +11,7 @@ import { auth } from '../Config/firebase'
 import axios from 'axios'
 import Container from './Container'
 import './SearchBar.scss'
-import { addInstrument } from '../Util/db'
+import { updateWatchlist } from '../Util/db'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 // import { uuidv4 } from '@firebase/util'
@@ -39,7 +39,7 @@ function SearchBar(props) {
 
     const onSubmit = (data) => {
         handleSubmit(data)
-        addInstrument(auth.currentUser.uid, term)
+        updateWatchlist(auth.currentUser.uid, term)
         reset()
         setTerm('')
     }
